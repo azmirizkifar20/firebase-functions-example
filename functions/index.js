@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const bodyParser = require('body-parser');
-const Router = require('./routes/route');
+const Router = require('./routes/router');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -17,7 +17,7 @@ app.use(
 );
 
 // use router
-app.use('/countries', Router);
+app.use('/user', Router);
 
 // not as clean, but a better endpoint to consume
 const api = functions.https.onRequest((request, response) => {

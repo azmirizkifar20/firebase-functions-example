@@ -1,46 +1,81 @@
 const admin = require('firebase-admin');
-const { countries } = require('../model/models');
+const { user, karya } = require('../model/schema');
+const { responseData, responseMessage } = require('../utils/response');
+
 admin.initializeApp({
     apiKey: 'AIzaSyCIuecbgiZZx3JcWF9X8kyNP7baRbvDstE',
     authDomain: 'firebase-adminsdk-an78i@rizkifar-project.iam.gserviceaccount.com',
     projectId: 'rizkifar-project',
 });
 const firestore = admin.firestore();
+const dbUser = firestore.collection('user');
 
-// create data countries
-exports.createCountries = (req, res, next) => {
-    firestore
-        .collection('countries')
-        .add(countries(req.body))
+// create data user
+exports.createUser = (req, res, next) => {
+    dbUser
+        .add(user(req.body))
         .then((docRef) => {
-            return res
-                .status(200)
-                .json({ success: true, message: `Data countries berhasil dibuat dengan ID = ${docRef.id}` });
+            return responseMessage(res, 201, `Data user berhasil dibuat dengan ID = ${docRef.id}`);
         })
         .catch((e) => {
             return res.status(500).json({ success: false, message: e.message });
         });
 };
 
-// get data countries
-exports.getCountries = (req, res, next) => {
-    firestore
-        .collection('countries')
+// update data user (belum validasi uid)
+exports.updateUser = (req, res, next) => {
+    // get data input
+    var data = {
+        uid: req.params.uid,
+        name: req.body.name,
+        nim: req.body.nim,
+        class: req.body.class,
+        position: req.body.position,
+        face: req.body.face,
+    };
+
+    dbUser
+        .doc(req.params.uid)
+        .update(data)
+        .then(() => {
+            return responseMessage(res, 200, 'Berhasil update user!');
+        })
+        .catch((e) => {
+            return res.status(500).json({ success: false, message: e.message });
+        });
+};
+
+// hapus data user (belum validasi uid)
+exports.deleteUser = (req, res, next) => {
+    dbUser
+        .doc(req.params.uid)
+        .delete()
+        .then(() => {
+            return responseMessage(res, 200, 'Berhasil hapus user!');
+        })
+        .catch((e) => {
+            return res.status(500).json({ success: false, message: e.message });
+        });
+};
+
+// get data user
+exports.getUser = (req, res, next) => {
+    dbUser
         .get()
         .then((qs) => {
             var data = [];
 
             qs.forEach((doc) => {
                 data.push({
-                    id: doc.id,
-                    namaNegara: doc.data().namaNegara,
-                    ibuKota: doc.data().ibuKota,
-                    jumlahPenduduk: doc.data().jumlahPenduduk,
-                    mataUang: doc.data().mataUang,
-                    gambar: doc.data().gambar,
+                    uid: doc.id,
+                    name: doc.data().name,
+                    nim: doc.data().nim,
+                    class: doc.data().class,
+                    position: doc.data().position,
+                    face: doc.data().face,
                 });
             });
-            return res.status(200).json(data);
+            return responseData(res, 200, data);
         })
         .catch((e) => {
             return res.status(500).json({ success: false, message: e.message });
