@@ -1,9 +1,9 @@
 const admin = require('firebase-admin');
 const { countries } = require('../model/models');
 admin.initializeApp({
-    apiKey: '[YOUR_API_KEY]',
-    authDomain: '[YOUR_AUTH_DOMAIN]',
-    projectId: '[YOUR_PROJECT_ID]',
+    apiKey: 'AIzaSyCIuecbgiZZx3JcWF9X8kyNP7baRbvDstE',
+    authDomain: 'firebase-adminsdk-an78i@rizkifar-project.iam.gserviceaccount.com',
+    projectId: 'rizkifar-project',
 });
 const firestore = admin.firestore();
 
